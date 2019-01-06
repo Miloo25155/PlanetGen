@@ -7,6 +7,7 @@ public class TerrainFace
     ShapeGenerator shapeGenerator;
     Mesh mesh;
     MeshCollider meshCollider;
+
     int resolution;
     Vector3 localUp;
 
