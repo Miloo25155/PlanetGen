@@ -55,13 +55,12 @@ public class Planet : MonoBehaviour
                 meshObj.AddComponent<MeshRenderer>();
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
-
-                meshColliders[i] = meshObj.AddComponent<MeshCollider>();
             }
 
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colorSettings.planetMaterial;
+            //meshFilters[i].GetComponent<MeshRenderer>().material = colorSettings.planetMaterial;
 
-            terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilters[i].sharedMesh, meshColliders[i], resolution, directions[i]);
+            terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -71,36 +70,21 @@ public class Planet : MonoBehaviour
     {
         Initialize();
         GenerateMesh();
-        //GenerateMeshCollider();
         GenerateColor();
     }
 
     public void ClearPlanet()
     {
-        meshFilters = new MeshFilter[6];
-        meshColliders = new MeshCollider[6];
+        meshFilters = null;
+        meshColliders = null;
+        terrainFaces = null;
 
-        for (int i = 0; i < 6; i++)
+        int childCount = transform.childCount;
+        for (int i = childCount - 1; i >= 0; i--)
         {
             DestroyImmediate(transform.GetChild(i).gameObject);
         }
     }
-
-    //public void GenerateMeshCollider()
-    //{
-    //    planetCollider.sharedMesh = new Mesh();
-
-    //    CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-    //    int index = 0;
-    //    for (int i = 0; i < meshFilters.Length; i++)
-    //    {
-    //        if (meshFilters[i].sharedMesh == null) continue;
-    //        combine[index].mesh = meshFilters[i].sharedMesh;
-    //        combine[index++].transform = meshFilters[i].transform.localToWorldMatrix;
-    //    }
-
-    //    planetCollider.sharedMesh.CombineMeshes(combine);
-    //}
 
     public void OnShapeSettingsUpdated()
     {
@@ -127,6 +111,7 @@ public class Planet : MonoBehaviour
             if (meshFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].ConstructMesh();
+                meshColliders[i] = terrainFaces[i].InitMeshCollider(meshFilters[i].gameObject);
             }
         }
 
@@ -136,5 +121,12 @@ public class Planet : MonoBehaviour
     void GenerateColor()
     {
         colorGenerator.UpdateColors();
+        for (int i = 0; i < 6; i++)
+        {
+            if (meshFilters[i].gameObject.activeSelf)
+            {
+                terrainFaces[i].UpdateUVs(colorGenerator);
+            }
+        }
     }
 }
