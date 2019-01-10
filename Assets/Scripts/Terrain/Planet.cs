@@ -60,7 +60,7 @@ public class Planet : MonoBehaviour
             meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colorSettings.planetMaterial;
             //meshFilters[i].GetComponent<MeshRenderer>().material = colorSettings.planetMaterial;
 
-            terrainFaces[i] = new TerrainFace(shapeGenerator, colorGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
+            terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int)faceRenderMask - 1 == i;
             meshFilters[i].gameObject.SetActive(renderFace);
         }
@@ -110,7 +110,7 @@ public class Planet : MonoBehaviour
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
-                terrainFaces[i].ConstructMesh(shapeSettings.lowPolyGeneration);
+                terrainFaces[i].ConstructMesh(shapeSettings.lowPolyGeneration, colorGenerator);
                 meshColliders[i] = terrainFaces[i].InitMeshCollider(meshFilters[i].gameObject);
             }
         }

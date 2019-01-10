@@ -13,6 +13,10 @@ public class WaterFace
     Vector3 axisA;
     Vector3 axisB;
 
+    Vector3[] vertices;
+    int[] triangles;
+    Vector2[] uvs;
+
     public WaterFace(Mesh mesh, int resolution, Vector3 localUp)
     {
         this.mesh = mesh;
@@ -23,14 +27,14 @@ public class WaterFace
         axisB = Vector3.Cross(localUp, axisA);
     }
 
-    public void ConstructMesh(float radius)
+    public void ConstructMesh(float radius, bool useFlatShading)
     {
-        Vector3[] vertices = new Vector3[resolution * resolution];
-        int[] triangles = new int[(resolution - 1) * (resolution - 1) * 2 * 3];
+        vertices = new Vector3[resolution * resolution];
+        triangles = new int[(resolution - 1) * (resolution - 1) * 2 * 3];
 
         int triIndex = 0;
 
-        Vector2[] uv = mesh.uv;
+        //Vector2[] uv = mesh.uv;
 
         for (int y = 0; y < resolution; y++)
         {
@@ -56,11 +60,35 @@ public class WaterFace
                 }
             }
         }
+
         mesh.Clear();
+
+        if (useFlatShading)
+        {
+            ConstructFlatMesh();
+        }
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+
+        //mesh.uv = uvs;
         mesh.RecalculateNormals();
+    }
+
+    public void ConstructFlatMesh()
+    {
+        Vector3[] flatVertices = new Vector3[triangles.Length];
+        //Vector2[] flatUvs = new Vector2[triangles.Length];
+
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            flatVertices[i] = vertices[triangles[i]];
+            //flatUvs[i] = uvs[triangles[i]];
+            triangles[i] = i;
+        }
+
+        vertices = flatVertices;
+        //uvs = flatUvs;
     }
 
     public MeshCollider InitMeshCollider(GameObject gameObject)

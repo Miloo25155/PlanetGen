@@ -5,7 +5,7 @@ using UnityEngine;
 public class TerrainFace
 {
     ShapeGenerator shapeGenerator;
-    ColorGenerator colorGenerator;
+
     Mesh mesh;
     MeshCollider meshCollider;
 
@@ -19,19 +19,18 @@ public class TerrainFace
     int[] triangles;
     Vector2[] uvs;
 
-    public TerrainFace(ShapeGenerator shapeGenerator, ColorGenerator colorGenerator, Mesh mesh, int resolution, Vector3 localUp)
+    public TerrainFace(ShapeGenerator shapeGenerator, Mesh mesh, int resolution, Vector3 localUp)
     {
         this.shapeGenerator = shapeGenerator;
         this.mesh = mesh;
         this.resolution = resolution;
         this.localUp = localUp;
-        this.colorGenerator = colorGenerator;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
     }
 
-    public void ConstructMesh(bool useFlatShading)
+    public void ConstructMesh(bool useFlatShading, ColorGenerator colorGenerator)
     {
         triangles = new int[(resolution - 1) * (resolution - 1) * 2 * 3];
         vertices = new Vector3[resolution * resolution];
@@ -68,13 +67,13 @@ public class TerrainFace
 
         if (useFlatShading)
         {
+            UpdateUVs(colorGenerator);
             ConstructFlatMesh();
         }
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
-        UpdateUVs(colorGenerator);
         mesh.uv = uvs;
         mesh.RecalculateNormals();
     }

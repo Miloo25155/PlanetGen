@@ -6,6 +6,7 @@ using UnityEngine;
 public class WaterSettings : ScriptableObject
 {
     public float sphereRadius = 1;
+    public bool lowPolyGeneration;
 
     [Range(0,1)]
     public float glow = 1;

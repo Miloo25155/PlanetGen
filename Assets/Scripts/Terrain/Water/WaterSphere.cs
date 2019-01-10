@@ -83,7 +83,7 @@ public class WaterSphere : MonoBehaviour
         {
             if (meshFilters[i].gameObject.activeSelf)
             {
-                waterFaces[i].ConstructMesh(waterSettings.sphereRadius);
+                waterFaces[i].ConstructMesh(waterSettings.sphereRadius, waterSettings.lowPolyGeneration);
                 meshColliders[i] = waterFaces[i].InitMeshCollider(meshFilters[i].gameObject);
             }
         }
