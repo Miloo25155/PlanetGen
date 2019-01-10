@@ -5,6 +5,7 @@ using UnityEngine;
 public class TerrainFace
 {
     ShapeGenerator shapeGenerator;
+    ColorGenerator colorGenerator;
     Mesh mesh;
     MeshCollider meshCollider;
 
@@ -14,25 +15,29 @@ public class TerrainFace
     Vector3 axisA;
     Vector3 axisB;
 
-    public TerrainFace(ShapeGenerator shapeGenerator, Mesh mesh, int resolution, Vector3 localUp)
+    Vector3[] vertices;
+    int[] triangles;
+    Vector2[] uvs;
+
+    public TerrainFace(ShapeGenerator shapeGenerator, ColorGenerator colorGenerator, Mesh mesh, int resolution, Vector3 localUp)
     {
         this.shapeGenerator = shapeGenerator;
         this.mesh = mesh;
         this.resolution = resolution;
         this.localUp = localUp;
+        this.colorGenerator = colorGenerator;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
     }
 
-    public void ConstructMesh()
+    public void ConstructMesh(bool useFlatShading)
     {
-        Vector3[] vertices = new Vector3[resolution * resolution];
-        int[] triangles = new int[(resolution - 1) * (resolution - 1) * 2 * 3];
+        triangles = new int[(resolution - 1) * (resolution - 1) * 2 * 3];
+        vertices = new Vector3[resolution * resolution];
+        uvs = new Vector2[resolution * resolution];
 
         int triIndex = 0;
-
-        Vector2[] uv = mesh.uv;
 
         for (int y = 0; y < resolution; y++)
         {
@@ -58,21 +63,40 @@ public class TerrainFace
                 }
             }
         }
+
         mesh.Clear();
+
+        if (useFlatShading)
+        {
+            ConstructFlatMesh();
+        }
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+
+        UpdateUVs(colorGenerator);
+        mesh.uv = uvs;
         mesh.RecalculateNormals();
-        if(mesh.uv.Length == uv.Length)
+    }
+
+    public void ConstructFlatMesh()
+    {
+        Vector3[] flatVertices = new Vector3[triangles.Length];
+        Vector2[] flatUvs = new Vector2[triangles.Length];
+
+        for (int i = 0; i < triangles.Length; i++)
         {
-            mesh.uv = uv;
+            flatVertices[i] = vertices[triangles[i]];
+            flatUvs[i] = uvs[triangles[i]];
+            triangles[i] = i;
         }
+
+        vertices = flatVertices;
+        uvs = flatUvs;
     }
 
     public void UpdateUVs(ColorGenerator colorGenerator)
     {
-        Vector2[] uv = new Vector2[resolution * resolution];
-
         for (int y = 0; y < resolution; y++)
         {
             for (int x = 0; x < resolution; x++)
@@ -82,11 +106,9 @@ public class TerrainFace
                 Vector3 pointOnUnitCube = localUp + (percent.x - 0.5f) * 2 * axisA + (percent.y - 0.5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.normalized;
 
-                uv[i] = new Vector2(colorGenerator.BiomePercentFromPoint(pointOnUnitSphere), 0);
+                uvs[i] = new Vector2(colorGenerator.BiomePercentFromPoint(pointOnUnitSphere), 0);
             }
         }
-
-        mesh.uv = uv;
     }
 
     public MeshCollider InitMeshCollider(GameObject gameObject)
