@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class WaterSphere : MonoBehaviour
     WaterFace[] waterFaces;
 
     public WaterSettings waterSettings;
+    //public WaveSettings waveSettings;
     [HideInInspector]
     public bool waterSettingsFoldout;
 
@@ -86,6 +88,14 @@ public class WaterSphere : MonoBehaviour
                 waterFaces[i].ConstructMesh(waterSettings.sphereRadius, waterSettings.lowPolyGeneration);
                 meshColliders[i] = waterFaces[i].InitMeshCollider(meshFilters[i].gameObject);
             }
+        }
+    }
+
+    public void GenerateWaves()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            this.waterFaces[i].GenerateWaves();
         }
     }
 }

@@ -20,13 +20,13 @@ MonoBehaviour:
     noiseSettings:
       filterType: 0
       simpleNoiseSettings:
-        strength: 0.1
+        strength: 0.35
         numberLayers: 5
-        baseRoughness: 1.7
+        baseRoughness: 1.4
         roughness: 3.1
         persistence: 0.16
         center: {x: 0, y: 0, z: 0}
-        minValue: 0.5
+        minValue: 0.55
       rigidNoiseSettings:
         strength: 1
         numberLayers: 1
