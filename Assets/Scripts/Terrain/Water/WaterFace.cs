@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WaterFace 
 {
-    Mesh mesh;
+    public Mesh mesh;
     MeshCollider meshCollider;
 
     int resolution;
@@ -103,25 +103,5 @@ public class WaterFace
         meshCollider.sharedMesh = mesh;
 
         return meshCollider;
-    }
-
-    public void GenerateWaves()
-    {
-        float speed = 1f;
-        float waveLength = 0.1f;
-        float waveHeight = 0.1f;
-        float randomHeight = 0.1f;
-        float randomSpeed = 0.5f;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            Vector3 vertex = vertices[i];
-            vertex.y += Mathf.Sin(Time.time * speed + vertices[i].x * waveLength + vertices[i].y * waveLength) * waveHeight;
-            //vertex.y += Mathf.Sin(Mathf.Cos(Random.value * 1.0f) * randomHeight * Mathf.Cos(Time.time * randomSpeed * Mathf.Sin(Random.value * 1.0f)));
-            //vertex.y += Mathf.PerlinNoise(baseHeight[i].x + Mathf.Cos(Time.time * 0.1f) + noiseWalk, baseHeight[i].y + Mathf.Sin(Time.time * 0.1f)) * noiseStrength;
-            vertices[i] = vertex;
-        }
-        mesh.vertices = vertices;
-        mesh.RecalculateNormals();
     }
 }

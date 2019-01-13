@@ -6,6 +6,8 @@ using UnityEngine;
 public class WaterSettings : ScriptableObject
 {
     public float sphereRadius = 1;
+    [Range(0, 5)]
+    public int recursionLevel = 0;
     public bool lowPolyGeneration;
 
     [Range(0,1)]

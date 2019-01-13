@@ -18,7 +18,7 @@ public class TerrainGenerationMaster : MonoBehaviour
     }
     void Update()
     {
-        //waterSphere.GenerateWaves();
+
     }
 
 }
